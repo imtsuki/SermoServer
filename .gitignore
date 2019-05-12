@@ -1,0 +1,6 @@
+log/
+*.o
+.vscode/
+serverMain
+memo.json
+.DS_Store
