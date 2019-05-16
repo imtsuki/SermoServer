@@ -4,3 +4,4 @@ log/
 serverMain
 memo.json
 .DS_Store
+build/

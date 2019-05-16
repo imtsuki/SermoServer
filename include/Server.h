@@ -6,6 +6,7 @@
 #include <thread>
 #include <vector>
 #include <map>
+#include <set>
 #include <unordered_map>
 #include <nlohmann/json.hpp>
 #include "Session.h"
@@ -53,6 +54,7 @@ private:
     std::vector<std::thread> threads;
     std::map<int, Session *> sessionMap;
     std::unordered_map<std::string, std::function<void (Json& response, Json& request)> > callbackMap;
+    std::unordered_map<int, Session *> onlineSet;
 };
 
 } // namespace Sermo

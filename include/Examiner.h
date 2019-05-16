@@ -18,6 +18,7 @@ public:
     Examiner() = default;
 
     Examiner(const User *user) {
+        setId(user->getId());
         setUsername(user->getUsername());
         setPassword(user->getPassword());
         setUserType(user->getUserType());

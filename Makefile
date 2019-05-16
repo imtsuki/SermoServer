@@ -4,11 +4,18 @@ CXX := g++
 CXXFLAGS := -std=c++17 -Iinclude -g
 LDFLAGS := -lg3logger -lsqlite3 -lconfig++
 
-server: main.o log.o Db.o Config.o Server.o GameLogic.o client
-	$(CXX) main.o log.o Db.o Config.o Server.o GameLogic.o -o serverMain $(CXXFLAGS) $(LDFLAGS)
+SRCS := $(wildcard src/*.cpp)
+OBJS := $(patsubst %.cpp, build/%.o, $(SRCS))
+
+server: $(OBJS)
+	$(CXX) $(OBJS) -o build/server $(CXXFLAGS) $(LDFLAGS)
+
+build/src/%.o: src/%.cpp
+	@mkdir -p $(@D)
+	$(CXX) $(CXXFLAGS) -c -o $@ $<
 
 countline:
-	@echo "Total code lines: `ls include/*.h *.cpp | xargs cat | wc -l`"
+	@echo "Total code lines: `ls include/*.h src/*.cpp | xargs cat | wc -l`"
 
-client: client.cpp
-	clang++ client.cpp -o client -std=c++17
+clean:
+	rm -rf build

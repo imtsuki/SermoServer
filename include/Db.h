@@ -25,7 +25,20 @@ public:
     Player queryPlayer(int id);
     Examiner queryExaminer(int id);
 
+    std::vector<Player> queryPlayerList();
+    std::vector<Examiner> queryExaminerList();
+    std::vector<int> queryIdList(User::UserType type);
+
+    int addWord(std::string word, int examinerId);
+
+
     int queryUserId(const std::string& username);
+
+    int update(int id, const std::string& table, const std::string& key, const std::string& value);
+    int update(int id, const std::string& table, const std::string& key, int value);
+
+    std::string getWord();
+    std::string getWord(int maxLength);
 
 private:
     static bool createSharedInstance();

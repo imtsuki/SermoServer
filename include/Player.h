@@ -6,7 +6,7 @@
 
 class Player : public User {
 private:
-    int exprience;
+    int experience;
     int achievement;
 
 public:
@@ -19,6 +19,7 @@ public:
     Player() = default;
 
     Player(const User *user) {
+        setId(user->getId());
         setUsername(user->getUsername());
         setPassword(user->getPassword());
         setUserType(user->getUserType());
@@ -27,8 +28,8 @@ public:
         setLevel(user->getLevel());
     }
 
-    int getExprience() const { return exprience; }
-    void setExprience(const int& ex) { exprience = ex; }
+    int getExperience() const { return experience; }
+    void setExperience(const int& ex) { experience = ex; }
 
     int getAchievement() const { return achievement; }
     void setAchievement(const int& achiv) { achievement = achiv; }

@@ -12,10 +12,12 @@ namespace Sermo {
 typedef int SessionId;
 
 struct Session {
-    enum Status {BORN, CONNECTED, LOGIN, DISCONNECTED, DIED};
+    enum Status {CONNECTED, LOGIN, PVE, DISCONNECTED, DIED};
     SessionId id;
     Status status;
     User *user;
+    std::string pvpWord;
+    Session* opponent;
 
     int clientSocket;
     sockaddr_in clientAddress;

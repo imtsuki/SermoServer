@@ -18,3 +18,9 @@ CREATE TABLE examiner(
     id INTEGER PRIMARY KEY,
     number_word INTEGER DEFAULT 0
 );
+
+CREATE TABLE question(
+    word TEXT NOT NULL UNIQUE,
+    level INTEGER NOT NULL DEFAULT 1,
+    examiner INTEGER NOT NULL
+);

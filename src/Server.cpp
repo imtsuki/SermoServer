@@ -135,7 +135,10 @@ void Server::tcpMessageReceiver(Session *session) {
         result = read(session->clientSocket, &c, 1);
         if (result != 1) {
             LOG_WARNING_ERRNO();
-            LOG(WARNING) << result;
+            LOG(INFO) << "ClientSocket " << inet_ntoa(session->clientAddress.sin_addr) << ":" << ntohs(session->clientAddress.sin_port)
+                      << " was closed by client.";
+            close(session->clientSocket);
+            session->messageQueue.pushMessage(Message(Message::MSGTYPE::CLOSE));
             break;
         }
         if (c == '\0') {
@@ -146,6 +149,7 @@ void Server::tcpMessageReceiver(Session *session) {
             body += c;
         }
     }
+    LOG(INFO) << "tcpMessageReceiver finished.";
 }
 
 void Server::startSessionEventLoop(Session *session) {
@@ -158,6 +162,36 @@ void Server::startSessionEventLoop(Session *session) {
     while (true) {
         // 从消息队列获取消息
         auto message = session->messageQueue.popMessage();
+        if (message.type == Message::MSGTYPE::CLOSE) {
+            // 清理资源
+            if (session->user) {
+                // 用户下线
+                onlineSet.erase(session->user->getId());
+                delete session->user;
+                delete session;
+            }
+            break;
+        }
+
+        if (message.type == Message::MSGTYPE::NOTIFICATION) {
+            auto& msg = message.body;
+            std::string response;
+            if (msg["msg"] == "invite") {
+                session->opponent = onlineSet[msg["opponentId"]];
+                session->pvpWord = session->opponent->pvpWord;
+                response = R"({"type": "invite"})";
+            } else if (msg["msg"] == "opponentAccepted") {
+                Json json = {
+                    {"type", "opponentAccepted"},
+                    {"pvpWord", session->pvpWord}
+                };
+                response = json.dump();
+            } else if (msg["msg"] == "opponentSuccess") {
+                response = R"({"type": "opponentSuccess"})";
+            }
+            write(session->clientSocket, response.c_str(), response.size() + 1);
+            continue;
+        }
         auto& request = message.body;
 
         // 检查 request 格式是否有效
@@ -169,6 +203,9 @@ void Server::startSessionEventLoop(Session *session) {
             continue;
         } else if (request["type"] != "connect" && request["sessionId"].is_null()) {
             LOG(WARNING) << "No SessionId; Discard";
+            continue;
+        } else if (request["type"] != "connect" && sessionMap.count(request["sessionId"]) == 0) {
+            LOG(WARNING) << "Invalid SessionId; Discard";
             continue;
         }
 
@@ -185,6 +222,7 @@ void Server::startSessionEventLoop(Session *session) {
         write(session->clientSocket, re.c_str(), re.size() + 1);
 
     }
+    LOG(INFO) << "Client thread finished.";
 }
 
 void Server::registerGameLogic(std::string type, std::function<void (Json& response, Json& request)> callback) {

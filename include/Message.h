@@ -1,5 +1,6 @@
 #include <string>
 #include <nlohmann/json.hpp>
+#include <g3log/g3log.hpp>
 
 using Json = nlohmann::json;
 
@@ -8,7 +9,8 @@ namespace Sermo {
 struct Message {
     enum MSGTYPE {
         REQUEST,
-        NOTIFICATION
+        NOTIFICATION,
+        CLOSE
     };
 
     MSGTYPE type;
@@ -17,8 +19,15 @@ struct Message {
     Message() = default;
 
     Message(MSGTYPE type, const std::string& raw) : type(type) {
-        body = Json::parse(raw);
+        try {
+            body = Json::parse(raw);
+        } catch (Json::exception& e) {
+            LOG(WARNING) << e.what();
+            body = Json();
+        }
     }
+
+    Message(MSGTYPE type) : type(type) { }
 };
 
 } // namespace Sermo

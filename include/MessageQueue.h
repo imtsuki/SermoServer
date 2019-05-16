@@ -20,7 +20,7 @@ public:
     void pushMessage(Message msg) {
         std::unique_lock<std::mutex> lock(accessLock);
         queue.push(msg);
-        avaliable.notify_one();
+        avaliable.notify_all();
     }
 
     Message popMessage() {

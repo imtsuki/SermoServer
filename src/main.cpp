@@ -13,7 +13,11 @@ int main(int argc, char **argv, char **envp) {
     using namespace Sermo;
     log_init(argc, argv, envp);
     auto config = Config::getInstance();
-    config->readFile("./sermo.conf");
+    try {
+        config->readFile("./sermo.conf");
+    } catch (libconfig::ConfigException& e) {
+        LOG(FATAL) << e.what() << ": sermo.conf not found";
+    }
     LOG(INFO) << R"(
       ___           ___           ___           ___           ___
      /  /\         /  /\         /  /\         /  /\         /  /\
