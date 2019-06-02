@@ -2,7 +2,7 @@ all: server
 
 CXX := g++
 CXXFLAGS := -std=c++17 -Iinclude -g
-LDFLAGS := -lg3logger -lsqlite3 -lconfig++
+LDFLAGS := -lg3logger -lsqlite3 -lconfig++ -lpthread
 
 SRCS := $(wildcard src/*.cpp)
 OBJS := $(patsubst %.cpp, build/%.o, $(SRCS))
