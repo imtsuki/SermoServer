@@ -4,7 +4,6 @@ Backend of Sermo, a word game.
 
 This is part of the final project of course: Object-Oriented Programming Using C++.
 
-
 ## 设计亮点
 
 - 完全的**面向对象设计**，同时采用**工厂模式**避免裸 `new`、`delete`，采用**单例模式**实现资源的安全共享；
