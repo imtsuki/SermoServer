@@ -8,5 +8,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v1
+      - name: deps
+        run: apt install nlohmann-json-dev libconfig++-dev sqlite3
       - name: make
         run: make
